@@ -74,7 +74,6 @@ public class VistaEmpleado {
 
             System.out.println("Empleado agregado exitosamente. Datos del nuevo empleado:");
             System.out.println(nuevoEmpleado.toString());
-            listarEmpleados(); // Mostrar la lista después de agregar
         } catch (InputMismatchException e) {
             System.out.println("Error: Entrada inválida, por favor ingrese datos correctos.");
             scanner.nextLine();
@@ -99,6 +98,8 @@ public class VistaEmpleado {
     }
 
     private void eliminarEmpleado() {
+        controlador.listarEmpleados(); 
+
         try {
             System.out.print("Ingrese el número del empleado que desea eliminar: ");
             int numero = scanner.nextInt();
@@ -118,3 +119,4 @@ public class VistaEmpleado {
         }
     }
 }
+

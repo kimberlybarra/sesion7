@@ -13,7 +13,6 @@ public class ControladorEmpleado {
         leerEmpleados();
     }
 
-    // Leer empleados desde el archivo
     public void leerEmpleados() {
         try (BufferedReader reader = new BufferedReader(new FileReader(archivo))) {
             String linea;
@@ -33,7 +32,6 @@ public class ControladorEmpleado {
         }
     }
 
-    // Guardar empleados en el archivo
     private void guardarEmpleados() {
         try (PrintWriter writer = new PrintWriter(new FileWriter(archivo))) {
             for (Empleado emp : empleados) {
@@ -44,7 +42,6 @@ public class ControladorEmpleado {
         }
     }
 
-    // Listar empleados
     public void listarEmpleados() {
         if (empleados.isEmpty()) {
             System.out.println("No hay empleados.");
@@ -55,7 +52,6 @@ public class ControladorEmpleado {
         }
     }
 
-    // Agregar un nuevo empleado con validación de número duplicado y sueldo válido
     public void agregarEmpleado(Empleado nuevoEmpleado) {
         if (buscarEmpleado(nuevoEmpleado.getNumero()) == null) {
             if (nuevoEmpleado.getSueldo() > 0) {
@@ -69,7 +65,6 @@ public class ControladorEmpleado {
         }
     }
 
-    // Buscar empleado por número
     public Empleado buscarEmpleado(int numero) {
         for (Empleado emp : empleados) {
             if (emp.getNumero() == numero) {
@@ -79,16 +74,15 @@ public class ControladorEmpleado {
         return null;
     }
 
- // Eliminar empleado por número
     public boolean eliminarEmpleado(int numero) {
         Empleado emp = buscarEmpleado(numero);
         if (emp != null) {
             empleados.remove(emp);
             guardarEmpleados();
-            return true; // Retornar true si se eliminó correctamente
+            return true; 
         } else {
             System.out.println("Empleado no encontrado.");
-            return false; // Retornar false si no se encontró
+            return false; 
         }
     }
 
