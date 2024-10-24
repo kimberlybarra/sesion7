@@ -20,13 +20,12 @@ public class Main {
             System.out.println("6. Salir");
             System.out.print("Elige una opción: ");
 
-            // Validación para asegurarse de que la opción ingresada sea un número entero.
             try {
                 opcion = scanner.nextInt();
-                scanner.nextLine(); // Limpia el buffer
+                scanner.nextLine(); 
             } catch (InputMismatchException e) {
                 System.out.println("Error: Debes ingresar un número.");
-                scanner.nextLine(); // Limpiar el scanner
+                scanner.nextLine(); 
                 continue;
             }
 
@@ -37,9 +36,8 @@ public class Main {
                     System.out.print("Ingresa el nombre del personaje (solo letras): ");
                     nombre = scanner.nextLine();
 
-                    // Valida que el nombre solo contenga letras y espacios
                     if (Pattern.matches("[a-zA-Z ]+", nombre)) {
-                        break;  // Sale del bucle si el nombre es válido
+                        break;  
                     } else {
                         System.out.println("Error: El nombre solo puede contener letras y espacios.");
                     }
@@ -103,7 +101,7 @@ public class Main {
                         System.out.println("No hay personajes para eliminar.");
                     } else {
                         System.out.println("Personajes disponibles:");
-                        gestor.mostrarPersonajes(); // Muestra los personajes existentes
+                        gestor.mostrarPersonajes(); 
 
                         System.out.print("Ingresa el nombre del personaje a eliminar: ");
                         String nombreEliminar = scanner.nextLine();
@@ -118,7 +116,7 @@ public class Main {
                         String atributoFiltrar;
                         while (true) {
                             System.out.print("Ingresa el atributo por el que quieres filtrar (vida, ataque, defensa, alcance): ");
-                            atributoFiltrar = scanner.nextLine().toLowerCase(); // Convertir a minúsculas para una comparación flexible
+                            atributoFiltrar = scanner.nextLine().toLowerCase(); 
 
                             if (atributoFiltrar.equals("vida") || atributoFiltrar.equals("ataque") ||
                                 atributoFiltrar.equals("defensa") || atributoFiltrar.equals("alcance")) {
@@ -137,7 +135,7 @@ public class Main {
                     if (gestor.personajesVacios()) {
                         System.out.println("No hay personajes para mostrar estadísticas.");
                     } else {
-                        gestor.mostrarEstadisticas();  // Llama al método para mostrar estadísticas
+                        gestor.mostrarEstadisticas();  
                     }
                     break;
 
