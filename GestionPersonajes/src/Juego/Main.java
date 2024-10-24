@@ -1,12 +1,14 @@
 package Juego;
 
+import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Main {
     public static void main(String[] args) {
         Gestor gestor = new Gestor();
         Scanner scanner = new Scanner(System.in);
-        int opcion;
+        int opcion = 0;
 
         do {
             System.out.println("\n----- Menú -----");
@@ -17,26 +19,39 @@ public class Main {
             System.out.println("5. Mostrar estadísticas");
             System.out.println("6. Salir");
             System.out.print("Elige una opción: ");
-            opcion = scanner.nextInt();
-            scanner.nextLine();  
+
+            // Validación para asegurarse de que la opción ingresada sea un número entero.
+            try {
+                opcion = scanner.nextInt();
+                scanner.nextLine(); // Limpia el buffer
+            } catch (InputMismatchException e) {
+                System.out.println("Error: Debes ingresar un número.");
+                scanner.nextLine(); // Limpiar el scanner
+                continue;
+            }
 
             switch (opcion) {
             case 1:
-                System.out.print("Ingresa el nombre del personaje: ");
-                String nombre = scanner.nextLine();
+                String nombre;
+                while (true) {
+                    System.out.print("Ingresa el nombre del personaje (solo letras): ");
+                    nombre = scanner.nextLine();
+
+                    // Valida que el nombre solo contenga letras y espacios
+                    if (Pattern.matches("[a-zA-Z ]+", nombre)) {
+                        break;  // Sale del bucle si el nombre es válido
+                    } else {
+                        System.out.println("Error: El nombre solo puede contener letras y espacios.");
+                    }
+                }
 
                 if (gestor.existePersonaje(nombre)) {
                     System.out.println("El personaje ya existe.");
                 } else {
-                    System.out.print("Ingresa la vida del personaje: ");
-                    int vida = scanner.nextInt();
-                    System.out.print("Ingresa el ataque del personaje: ");
-                    int ataque = scanner.nextInt();
-                    System.out.print("Ingresa la defensa del personaje: ");
-                    int defensa = scanner.nextInt();
-                    System.out.print("Ingresa el alcance del personaje: ");
-                    int alcance = scanner.nextInt();
-                    scanner.nextLine();  
+                    int vida = ingresarAtributoNumerico(scanner, "vida");
+                    int ataque = ingresarAtributoNumerico(scanner, "ataque");
+                    int defensa = ingresarAtributoNumerico(scanner, "defensa");
+                    int alcance = ingresarAtributoNumerico(scanner, "alcance");
 
                     Personaje personaje = new Personaje(nombre, vida, ataque, defensa, alcance);
                     gestor.agregarPersonaje(personaje);
@@ -50,41 +65,46 @@ public class Main {
                 }
                 break;
 
-            case 2:
-                if (gestor.personajesVacios()) {
-                    System.out.println("No hay personajes para modificar.");
-                } else {
-                    System.out.print("Ingresa el nombre del personaje a modificar: ");
-                    String nombreModificar = scanner.nextLine();
-                    if (gestor.existePersonaje(nombreModificar)) {
-                        String atributo;
-                        while (true) {
-                            System.out.print("Ingresa el atributo a modificar (vida, ataque, defensa, alcance): ");
-                            atributo = scanner.nextLine();
-                            
-                            if (atributo.equals("vida") || atributo.equals("ataque") || atributo.equals("defensa") || atributo.equals("alcance")) {
-                                break;  
-                            } else {
-                                System.out.println(" ");
-                            }
-                        }
-                        
-                        System.out.print("Ingresa el nuevo valor de " + atributo + ": ");
-                        int nuevoValor = scanner.nextInt();
-                        scanner.nextLine(); 
-
-                        gestor.modificarAtributoPersonaje(nombreModificar, atributo, nuevoValor);
-
+                case 2:
+                    if (gestor.personajesVacios()) {
+                        System.out.println("No hay personajes para modificar.");
                     } else {
-                        System.out.println("El personaje no existe.");
+                        System.out.println("Personajes disponibles:");
+                        gestor.mostrarPersonajes();  // Muestra los personajes existentes
+
+                        System.out.print("Ingresa el nombre del personaje a modificar: ");
+                        String nombreModificar = scanner.nextLine();
+
+                        if (gestor.existePersonaje(nombreModificar)) {
+                            String atributo;
+                            while (true) {
+                                System.out.print("Ingresa el atributo a modificar (vida, ataque, defensa, alcance): ");
+                                atributo = scanner.nextLine();
+
+                                if (atributo.equals("vida") || atributo.equals("ataque") ||
+                                    atributo.equals("defensa") || atributo.equals("alcance")) {
+                                    break;
+                                } else {
+                                    System.out.println("Atributo no válido. Por favor, ingresa uno de los siguientes: vida, ataque, defensa, alcance.");
+                                }
+                            }
+
+                            int nuevoValor = ingresarAtributoNumerico(scanner, atributo);
+                            gestor.modificarAtributoPersonaje(nombreModificar, atributo, nuevoValor);
+
+                        } else {
+                            System.out.println("El personaje no existe.");
+                        }
                     }
-                }
-                break;                    
+                    break;
 
                 case 3:
                     if (gestor.personajesVacios()) {
                         System.out.println("No hay personajes para eliminar.");
                     } else {
+                        System.out.println("Personajes disponibles:");
+                        gestor.mostrarPersonajes(); // Muestra los personajes existentes
+
                         System.out.print("Ingresa el nombre del personaje a eliminar: ");
                         String nombreEliminar = scanner.nextLine();
                         gestor.eliminarPersonaje(nombreEliminar);
@@ -100,9 +120,9 @@ public class Main {
                             System.out.print("Ingresa el atributo por el que quieres filtrar (vida, ataque, defensa, alcance): ");
                             atributoFiltrar = scanner.nextLine().toLowerCase(); // Convertir a minúsculas para una comparación flexible
 
-                            if (atributoFiltrar.equals("vida") || atributoFiltrar.equals("ataque") || 
+                            if (atributoFiltrar.equals("vida") || atributoFiltrar.equals("ataque") ||
                                 atributoFiltrar.equals("defensa") || atributoFiltrar.equals("alcance")) {
-                                break; 
+                                break;
                             } else {
                                 System.out.println("Atributo no válido. Por favor, ingresa un atributo correcto.");
                             }
@@ -113,22 +133,45 @@ public class Main {
                     }
                     break;
 
-                case 5: 
+                case 5:
                     if (gestor.personajesVacios()) {
                         System.out.println("No hay personajes para mostrar estadísticas.");
                     } else {
                         gestor.mostrarEstadisticas();  // Llama al método para mostrar estadísticas
                     }
                     break;
+
                 case 6:
                     System.out.println("Saliendo del programa");
                     break;
+
                 default:
                     System.out.println("Opción no válida.");
                     break;
             }
-        } while (opcion != 5);
+        } while (opcion != 6);
 
         scanner.close();
+    }
+
+    // Método auxiliar para pedir y validar atributos numéricos
+    private static int ingresarAtributoNumerico(Scanner scanner, String atributo) {
+        int valor = 0;
+        while (true) {
+            System.out.print("Ingresa el valor para " + atributo + ": ");
+            try {
+                valor = scanner.nextInt();
+                if (valor < 0) {
+                    System.out.println("Error: El valor no puede ser negativo.");
+                } else {
+                    scanner.nextLine(); // Limpia el buffer
+                    break;
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Error: Debes ingresar un número.");
+                scanner.nextLine(); // Limpiar el scanner
+            }
+        }
+        return valor;
     }
 }

@@ -2,3 +2,4 @@ Caballero,4,2,4,2
 Guerrero,2,4,2,4
 Arquero,2,4,1,8
 kim,100,5645,245,325
+gatito,100,50000,123456,5
