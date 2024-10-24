@@ -2,6 +2,7 @@ package Juego;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Gestor {
     private List<Personaje> personajes;
@@ -95,6 +96,85 @@ public class Gestor {
         } catch (IOException e) {
             System.out.println("Error al leer el archivo: " + e.getMessage());
         }
+    }
+    public void modificarAtributoPersonaje(String nombre, String atributo, int valor) {
+        Personaje personaje = obtenerPersonaje(nombre);
+        if (personaje != null) {
+            switch (atributo.toLowerCase()) {
+                case "vida":
+                    personaje.setVida(valor);
+                    break;
+                case "ataque":
+                    personaje.setAtaque(valor);
+                    break;
+                case "defensa":
+                    personaje.setDefensa(valor);
+                    break;
+                case "alcance":
+                    personaje.setAlcance(valor);
+                    break;
+                default:
+                    System.out.println("Atributo no válido, ingresa uno de los siguientes: vida, ataque, defensa, alcance.");
+                    return;  
+            }
+            guardarArchivo();
+            System.out.println("Atributo actualizado.");
+        } else {
+            System.out.println("El personaje no existe.");
+        }
+    }
+    
+    public void filtrarPersonajesPorAtributo(String atributo) {
+        List<Personaje> personajesOrdenados = personajes.stream()
+            .sorted((p1, p2) -> {
+                switch (atributo.toLowerCase()) {
+                    case "vida":
+                        return Integer.compare(p2.getVida(), p1.getVida());
+                    case "ataque":
+                        return Integer.compare(p2.getAtaque(), p1.getAtaque());
+                    case "defensa":
+                        return Integer.compare(p2.getDefensa(), p1.getDefensa());
+                    case "alcance":
+                        return Integer.compare(p2.getAlcance(), p1.getAlcance());
+                    default:
+                        System.out.println("Atributo no válido.");
+                        return 0;
+                }
+            })
+            .collect(Collectors.toList());
+
+        for (Personaje p : personajesOrdenados) {
+            System.out.println(p);
+        }
+    }
+    
+    public void mostrarEstadisticas() {
+        if (personajes.isEmpty()) {
+            System.out.println("No hay personajes para mostrar estadísticas.");
+            return;
+        }
+
+        int totalPersonajes = personajes.size();
+        int sumaVida = 0, sumaAtaque = 0, sumaDefensa = 0, sumaAlcance = 0;
+
+        for (Personaje p : personajes) {
+            sumaVida += p.getVida();
+            sumaAtaque += p.getAtaque();
+            sumaDefensa += p.getDefensa();
+            sumaAlcance += p.getAlcance();
+        }
+
+        double promedioVida = (double) sumaVida / totalPersonajes;
+        double promedioAtaque = (double) sumaAtaque / totalPersonajes;
+        double promedioDefensa = (double) sumaDefensa / totalPersonajes;
+        double promedioAlcance = (double) sumaAlcance / totalPersonajes;
+
+        System.out.println("\n--- Estadísticas de Personajes ---");
+        System.out.println("Total de personajes: " + totalPersonajes);
+        System.out.printf("Promedio de Vida: %.2f%n", promedioVida);
+        System.out.printf("Promedio de Ataque: %.2f%n", promedioAtaque);
+        System.out.printf("Promedio de Defensa: %.2f%n", promedioDefensa);
+        System.out.printf("Promedio de Alcance: %.2f%n", promedioAlcance);
     }
 
 	public boolean personajesVacios() {

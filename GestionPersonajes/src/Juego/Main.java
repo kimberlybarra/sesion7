@@ -14,7 +14,8 @@ public class Main {
             System.out.println("2. Modificar personaje");
             System.out.println("3. Eliminar personaje");
             System.out.println("4. Mostrar personajes");
-            System.out.println("5. Salir");
+            System.out.println("5. Mostrar estadísticas");
+            System.out.println("6. Salir");
             System.out.print("Elige una opción: ");
             opcion = scanner.nextInt();
             scanner.nextLine();  
@@ -49,30 +50,36 @@ public class Main {
                 }
                 break;
 
-
-                case 2:
-                    if (gestor.personajesVacios()) {
-                        System.out.println("No hay personajes para modificar.");
-                    } else {
-                        System.out.print("Ingresa el nombre del personaje a modificar: ");
-                        String nombreModificar = scanner.nextLine();
-                        if (gestor.existePersonaje(nombreModificar)) {
-                            System.out.print("Nueva vida: ");
-                            int nuevaVida = scanner.nextInt();
-                            System.out.print("Nuevo ataque: ");
-                            int nuevoAtaque = scanner.nextInt();
-                            System.out.print("Nueva defensa: ");
-                            int nuevaDefensa = scanner.nextInt();
-                            System.out.print("Nuevo alcance: ");
-                            int nuevoAlcance = scanner.nextInt();
-                            scanner.nextLine(); 
-
-                            gestor.modificarPersonaje(nombreModificar, nuevaVida, nuevoAtaque, nuevaDefensa, nuevoAlcance);
-                        } else {
-                            System.out.println("El personaje no existe.");
+            case 2:
+                if (gestor.personajesVacios()) {
+                    System.out.println("No hay personajes para modificar.");
+                } else {
+                    System.out.print("Ingresa el nombre del personaje a modificar: ");
+                    String nombreModificar = scanner.nextLine();
+                    if (gestor.existePersonaje(nombreModificar)) {
+                        String atributo;
+                        while (true) {
+                            System.out.print("Ingresa el atributo a modificar (vida, ataque, defensa, alcance): ");
+                            atributo = scanner.nextLine();
+                            
+                            if (atributo.equals("vida") || atributo.equals("ataque") || atributo.equals("defensa") || atributo.equals("alcance")) {
+                                break;  
+                            } else {
+                                System.out.println(" ");
+                            }
                         }
+                        
+                        System.out.print("Ingresa el nuevo valor de " + atributo + ": ");
+                        int nuevoValor = scanner.nextInt();
+                        scanner.nextLine(); 
+
+                        gestor.modificarAtributoPersonaje(nombreModificar, atributo, nuevoValor);
+
+                    } else {
+                        System.out.println("El personaje no existe.");
                     }
-                    break;
+                }
+                break;                    
 
                 case 3:
                     if (gestor.personajesVacios()) {
@@ -88,15 +95,34 @@ public class Main {
                     if (gestor.personajesVacios()) {
                         System.out.println("No hay personajes para mostrar.");
                     } else {
-                        System.out.println("Personajes actuales:");
-                        gestor.mostrarPersonajes();
+                        String atributoFiltrar;
+                        while (true) {
+                            System.out.print("Ingresa el atributo por el que quieres filtrar (vida, ataque, defensa, alcance): ");
+                            atributoFiltrar = scanner.nextLine().toLowerCase(); // Convertir a minúsculas para una comparación flexible
+
+                            if (atributoFiltrar.equals("vida") || atributoFiltrar.equals("ataque") || 
+                                atributoFiltrar.equals("defensa") || atributoFiltrar.equals("alcance")) {
+                                break; 
+                            } else {
+                                System.out.println("Atributo no válido. Por favor, ingresa un atributo correcto.");
+                            }
+                        }
+
+                        System.out.println("Personajes ordenados por " + atributoFiltrar + ":");
+                        gestor.filtrarPersonajesPorAtributo(atributoFiltrar);
                     }
                     break;
 
-                case 5:
+                case 5: 
+                    if (gestor.personajesVacios()) {
+                        System.out.println("No hay personajes para mostrar estadísticas.");
+                    } else {
+                        gestor.mostrarEstadisticas();  // Llama al método para mostrar estadísticas
+                    }
+                    break;
+                case 6:
                     System.out.println("Saliendo del programa");
                     break;
-
                 default:
                     System.out.println("Opción no válida.");
                     break;
